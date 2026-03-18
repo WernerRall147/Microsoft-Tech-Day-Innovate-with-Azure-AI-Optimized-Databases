@@ -7,8 +7,7 @@
 #   dotnet tool install -g Microsoft.DataApiBuilder
 #
 # Set your connection string once:
-#   export DATABASE_CONNECTION_STRING="Server=<server>.database.windows.net; \
-#     Database=TechDayDemo;Authentication=Active Directory Default;"
+#   export DATABASE_CONNECTION_STRING="Server=<your-server>.database.windows.net;Database=TechDayDemo;Authentication=Active Directory Default;"
 # =============================================================================
 
 set -euo pipefail

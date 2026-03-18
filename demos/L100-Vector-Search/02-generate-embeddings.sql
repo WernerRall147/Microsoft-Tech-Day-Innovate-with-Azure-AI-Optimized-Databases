@@ -5,12 +5,11 @@
 -- This script calls sp_invoke_external_rest_endpoint for each ticket and
 -- stores the resulting embedding vector back into the Embedding column.
 --
--- Replace <AOAI_ENDPOINT> and <DEPLOYMENT_NAME> before running.
---   Typical deployment name for ada-002: text-embedding-ada-002
---   Typical deployment name for 3-small: text-embedding-3-small
+-- Values are pre-filled from .env — ready to run.
 -- =============================================================================
 
 DECLARE @aoai_endpoint   NVARCHAR(500) = 'https://<AOAI_ENDPOINT>.openai.azure.com/openai/deployments/<DEPLOYMENT_NAME>/embeddings?api-version=2023-05-15';
+DECLARE @aoai_headers    NVARCHAR(500) = '{"api-key":"<AOAI_KEY>"}';
 DECLARE @ticket_text     NVARCHAR(2000);
 DECLARE @ticket_id       INT;
 DECLARE @json_payload    NVARCHAR(MAX);
@@ -35,8 +34,7 @@ BEGIN
     EXEC sp_invoke_external_rest_endpoint
         @url        = @aoai_endpoint,
         @method     = 'POST',
-        @headers    = '{"Content-Type":"application/json"}',
-        @credential = [AzureOpenAI_Credential],
+        @headers    = @aoai_headers,
         @payload    = @json_payload,
         @response   = @response OUTPUT;
 

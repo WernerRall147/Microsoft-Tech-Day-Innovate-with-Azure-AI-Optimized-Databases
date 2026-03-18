@@ -3,13 +3,14 @@
 -- Generate embeddings for knowledge base documents
 -- =============================================================================
 -- Reuses the AzureOpenAI_Credential created in L100.
--- Replace <AOAI_ENDPOINT> and <DEPLOYMENT_NAME> before running.
+-- Values are pre-filled from .env — ready to run.
 -- =============================================================================
 
 USE TechDayDemo;
 GO
 
 DECLARE @aoai_endpoint  NVARCHAR(500) = 'https://<AOAI_ENDPOINT>.openai.azure.com/openai/deployments/<DEPLOYMENT_NAME>/embeddings?api-version=2023-05-15';
+DECLARE @aoai_headers   NVARCHAR(500) = '{"api-key":"<AOAI_KEY>"}';
 DECLARE @doc_id         INT;
 DECLARE @doc_content    NVARCHAR(MAX);
 DECLARE @json_payload   NVARCHAR(MAX);
@@ -30,8 +31,7 @@ BEGIN
     EXEC sp_invoke_external_rest_endpoint
         @url        = @aoai_endpoint,
         @method     = 'POST',
-        @headers    = '{"Content-Type":"application/json"}',
-        @credential = [AzureOpenAI_Credential],
+        @headers    = @aoai_headers,
         @payload    = @json_payload,
         @response   = @response OUTPUT;
 

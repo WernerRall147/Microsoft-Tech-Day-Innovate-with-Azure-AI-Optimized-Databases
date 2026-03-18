@@ -1,0 +1,16 @@
+# Environment files with secrets
+.env
+!.env.example
+
+# PDFs (presentation decks — too large / not code)
+*.pdf
+
+# Data API Builder local state
+__brokered/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.suo
+*.user
+.vs/

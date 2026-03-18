@@ -29,13 +29,13 @@ GO
 -- ---------------------------------------------------------------------------
 -- PART B — Semantic / Vector search  ✅
 -- We embed the user's search phrase on the fly and measure cosine similarity.
--- Replace <AOAI_ENDPOINT> / <DEPLOYMENT_NAME> as in 02-generate-embeddings.sql
 -- ---------------------------------------------------------------------------
 
 PRINT '--- PART B: Semantic / Vector search ---';
 
 DECLARE @search_phrase  NVARCHAR(500) = 'slow performance after login';
 DECLARE @aoai_endpoint  NVARCHAR(500) = 'https://<AOAI_ENDPOINT>.openai.azure.com/openai/deployments/<DEPLOYMENT_NAME>/embeddings?api-version=2023-05-15';
+DECLARE @aoai_headers   NVARCHAR(500) = '{"api-key":"<AOAI_KEY>"}';
 DECLARE @json_payload   NVARCHAR(MAX);
 DECLARE @response       NVARCHAR(MAX);
 DECLARE @query_vector   VECTOR(1536);
@@ -46,8 +46,7 @@ SET @json_payload = JSON_OBJECT('input': @search_phrase);
 EXEC sp_invoke_external_rest_endpoint
     @url        = @aoai_endpoint,
     @method     = 'POST',
-    @headers    = '{"Content-Type":"application/json"}',
-    @credential = [AzureOpenAI_Credential],
+    @headers    = @aoai_headers,
     @payload    = @json_payload,
     @response   = @response OUTPUT;
 

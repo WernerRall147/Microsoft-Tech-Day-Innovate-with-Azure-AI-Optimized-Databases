@@ -5,14 +5,7 @@
 --   "This is not a chatbot querying SQL.
 --    This is SQL *orchestrating* the AI."
 --
--- Replace these placeholders before running:
---   <AOAI_ENDPOINT>          → e.g. myoai
---   <EMBEDDING_DEPLOYMENT>   → e.g. text-embedding-ada-002
---   <CHAT_DEPLOYMENT>        → e.g. gpt-4o
---
--- API versions: update to the latest stable versions as needed.
---   Embedding: https://learn.microsoft.com/azure/ai-services/openai/reference#embeddings
---   Chat:      https://learn.microsoft.com/azure/ai-services/openai/reference#chat-completions
+-- Values are pre-filled from .env — ready to run.
 -- =============================================================================
 
 USE TechDayDemo;
@@ -38,13 +31,16 @@ BEGIN
     SET NOCOUNT ON;
 
     -- -----------------------------------------------------------------------
-    -- Configuration — replace with your endpoints
+    -- Configuration
     -- -----------------------------------------------------------------------
     DECLARE @embed_endpoint NVARCHAR(500) =
         'https://<AOAI_ENDPOINT>.openai.azure.com/openai/deployments/<EMBEDDING_DEPLOYMENT>/embeddings?api-version=2023-05-15';
 
     DECLARE @chat_endpoint  NVARCHAR(500) =
         'https://<AOAI_ENDPOINT>.openai.azure.com/openai/deployments/<CHAT_DEPLOYMENT>/chat/completions?api-version=2024-02-01';
+
+    DECLARE @aoai_headers   NVARCHAR(500) =
+        '{"api-key":"<AOAI_KEY>"}';
 
     -- -----------------------------------------------------------------------
     -- STEP 1: Embed the user question
@@ -55,8 +51,7 @@ BEGIN
     EXEC sp_invoke_external_rest_endpoint
         @url        = @embed_endpoint,
         @method     = 'POST',
-        @headers    = '{"Content-Type":"application/json"}',
-        @credential = [AzureOpenAI_Credential],
+        @headers    = @aoai_headers,
         @payload    = @embed_payload,
         @response   = @embed_response OUTPUT;
 
@@ -124,8 +119,7 @@ BEGIN
     EXEC sp_invoke_external_rest_endpoint
         @url        = @chat_endpoint,
         @method     = 'POST',
-        @headers    = '{"Content-Type":"application/json"}',
-        @credential = [AzureOpenAI_Credential],
+        @headers    = @aoai_headers,
         @payload    = @chat_payload,
         @response   = @chat_response OUTPUT;
 

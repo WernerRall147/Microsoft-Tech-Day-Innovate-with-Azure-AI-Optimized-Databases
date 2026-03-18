@@ -19,23 +19,9 @@
 -- ② Enable the vector data type (Azure SQL preview or SQL Server 2025+)
 --    Nothing extra needed — VECTOR is a built-in type in Azure SQL.
 
--- ③ Store your Azure OpenAI key as a DATABASE SCOPED CREDENTIAL
---    so T-SQL can call the embedding endpoint securely.
---
---    Replace the placeholders before running:
---      <AOAI_KEY>      – your Azure OpenAI API key
---      <AOAI_ENDPOINT> – e.g. https://myoai.openai.azure.com
-
-IF NOT EXISTS (
-    SELECT 1 FROM sys.database_scoped_credentials
-    WHERE name = 'AzureOpenAI_Credential'
-)
-BEGIN
-    CREATE DATABASE SCOPED CREDENTIAL [AzureOpenAI_Credential]
-    WITH IDENTITY = 'HTTPEndpointHeaders',
-         SECRET = '{"api-key": "<AOAI_KEY>"}';
-END
-GO
+-- ③ Azure OpenAI authentication
+--    We pass the API key via @headers in sp_invoke_external_rest_endpoint.
+--    The key is stored in our .env file (never committed to git).
 
 -- ④ Create the support-tickets table with a VECTOR column for embeddings
 IF OBJECT_ID('dbo.SupportTickets', 'U') IS NOT NULL
