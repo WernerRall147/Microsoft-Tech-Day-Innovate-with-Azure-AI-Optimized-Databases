@@ -1,0 +1,122 @@
+{
+  "$schema": "https://dataapibuilder.azureedge.net/schemas/v1.1.7/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "mssql",
+    "connection-string": "@env('DATABASE_CONNECTION_STRING')",
+    "options": {
+      "set-session-context": true
+    }
+  },
+  "runtime": {
+    "rest": {
+      "enabled": true,
+      "path": "/api"
+    },
+    "graphql": {
+      "enabled": true,
+      "path": "/graphql",
+      "allow-introspection": true
+    },
+    "host": {
+      "mode": "development",
+      "cors": {
+        "origins": ["http://localhost:3000"],
+        "allow-credentials": false
+      },
+      "authentication": {
+        "provider": "StaticWebApps"
+      }
+    }
+  },
+  "entities": {
+    "Product": {
+      "source": {
+        "object": "dbo.Products",
+        "type": "table"
+      },
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Product",
+          "plural": "Products"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": ["read"]
+        },
+        {
+          "role": "authenticated",
+          "actions": ["create", "read", "update", "delete"]
+        }
+      ],
+      "mappings": {
+        "ProductId":  "id",
+        "Name":       "name",
+        "Category":   "category",
+        "Price":      "price",
+        "Attributes": "attributes",
+        "InStock":    "inStock"
+      }
+    },
+    "SupportTicket": {
+      "source": {
+        "object": "dbo.SupportTickets",
+        "type": "table"
+      },
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "SupportTicket",
+          "plural": "SupportTickets"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": ["read"]
+        },
+        {
+          "role": "authenticated",
+          "actions": ["create", "read", "update", "delete"]
+        }
+      ],
+      "mappings": {
+        "TicketId":     "id",
+        "CustomerName": "customerName",
+        "Category":     "category",
+        "TicketText":   "ticketText"
+      }
+    },
+    "ProductsByCategory": {
+      "source": {
+        "object": "dbo.usp_GetProductsByCategory",
+        "type": "stored-procedure",
+        "parameters": {
+          "Category": "string"
+        }
+      },
+      "graphql": {
+        "enabled": true,
+        "operation": "query"
+      },
+      "rest": {
+        "enabled": true,
+        "methods": ["get"]
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": ["execute"]
+        }
+      ]
+    }
+  }
+}
